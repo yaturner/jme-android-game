@@ -199,10 +199,11 @@ public class CubeGame extends SimpleApplication {
         bridge.setLocalTranslation(0, 0.12f, 0.22f);
         enterpriseNode.attachChild(bridge);
 
-        // Neck connecting saucer to secondary hull
+        // Neck connecting saucer to secondary hull, rotated to match nacelle orientation
         Geometry neck = new Geometry("Neck", new Box(0.055f, 0.075f, 0.055f));
         neck.setMaterial(hullMat);
         neck.setLocalTranslation(0, -0.01f, 0.04f);
+        neck.rotate(0, 0, FastMath.HALF_PI);
         enterpriseNode.attachChild(neck);
 
         // Secondary hull — elongated cylinder behind and below the saucer
