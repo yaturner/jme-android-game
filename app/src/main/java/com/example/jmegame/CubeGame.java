@@ -109,6 +109,8 @@ public class CubeGame extends SimpleApplication {
         cam.setLocation(new Vector3f(0, 0, 6));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         flyCam.setEnabled(false);
+        setDisplayFps(false);
+        setDisplayStatView(false);
         viewPort.setBackgroundColor(ColorRGBA.Black);
 
         // Starfield — 250 tiny boxes on a sphere shell, batched to one draw call
@@ -204,8 +206,8 @@ public class CubeGame extends SimpleApplication {
         // Bloom — GlowMode.Objects only blooms geometry that has GlowColor set,
         // so the main cube and background are unaffected
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
-        bloom.setBloomIntensity(3f);
-        bloom.setBlurScale(1.8f);
+        bloom.setBloomIntensity(1.5f);
+        bloom.setBlurScale(1.2f);
         bloom.setDownSamplingFactor(2f);  // halve the FBO resolution for mobile perf
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         fpp.addFilter(bloom);
