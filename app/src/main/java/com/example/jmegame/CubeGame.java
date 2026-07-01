@@ -175,10 +175,10 @@ public class CubeGame extends SimpleApplication {
         // Trail — particles emitted at the cube's world position, then left behind as it moves
         ParticleEmitter trail = new ParticleEmitter("OrbitTrail", ParticleMesh.Type.Triangle, 150);
         Material trailMat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
-        trailMat.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/Debris.png"));
+        trailMat.setTexture("Texture", assetManager.loadTexture("Textures/Particle.png"));
         trail.setMaterial(trailMat);
-        trail.setImagesX(3);
-        trail.setImagesY(3);
+        trail.setImagesX(1);
+        trail.setImagesY(1);
         trail.setStartColor(new ColorRGBA(1f, 0.75f, 0.1f, 1f));
         trail.setEndColor(  new ColorRGBA(0.8f, 0.1f, 0f,  0f));
         trail.setStartSize(0.25f);
