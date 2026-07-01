@@ -154,7 +154,12 @@ public class CubeGame extends SimpleApplication {
         orbitPivot.rotate(FastMath.DEG_TO_RAD * 20f, 0, 0);
         rootNode.attachChild(orbitPivot);
 
-        // Orbiting cube — offset along the pivot's local X, giving it an orbit radius of 2.5
+        // orbitNode carries both the cube geometry and the trail emitter at the orbit radius.
+        // Geometry is a scene-graph leaf and cannot have children, so a Node wrapper is required.
+        Node orbitNode = new Node("OrbitNode");
+        orbitNode.setLocalTranslation(2.5f, 0, 0);
+        orbitPivot.attachChild(orbitNode);
+
         Box orbitBox = new Box(0.4f, 0.4f, 0.4f);
         orbitCube = new Geometry("OrbitCube", orbitBox);
         Material orbitMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -165,8 +170,7 @@ public class CubeGame extends SimpleApplication {
         orbitMat.setFloat("Shininess", 32f);
         orbitMat.setColor("GlowColor", new ColorRGBA(1f, 0.5f, 0.05f, 1f));
         orbitCube.setMaterial(orbitMat);
-        orbitCube.setLocalTranslation(2.5f, 0, 0);
-        orbitPivot.attachChild(orbitCube);
+        orbitNode.attachChild(orbitCube);
 
         // Trail — particles emitted at the cube's world position, then left behind as it moves
         ParticleEmitter trail = new ParticleEmitter("OrbitTrail", ParticleMesh.Type.Triangle, 150);
@@ -175,18 +179,17 @@ public class CubeGame extends SimpleApplication {
         trail.setMaterial(trailMat);
         trail.setImagesX(3);
         trail.setImagesY(3);
-        trail.setStartColor(new ColorRGBA(1f, 0.75f, 0.1f, 1f));   // bright orange-yellow
-        trail.setEndColor(  new ColorRGBA(0.8f, 0.1f, 0f,  0f));   // dark red, fully transparent
+        trail.setStartColor(new ColorRGBA(1f, 0.75f, 0.1f, 1f));
+        trail.setEndColor(  new ColorRGBA(0.8f, 0.1f, 0f,  0f));
         trail.setStartSize(0.25f);
         trail.setEndSize(0.02f);
         trail.setGravity(0f, 0f, 0f);
         trail.setLowLife(0.4f);
         trail.setHighLife(0.65f);
         trail.setParticlesPerSec(120);
-        // Near-zero initial velocity so particles hang in world space as the cube moves away
         trail.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0, 0));
         trail.getParticleInfluencer().setVelocityVariation(0.05f);
-        orbitCube.attachChild(trail);
+        orbitNode.attachChild(trail);
 
         // Lights
         AmbientLight ambient = new AmbientLight();
