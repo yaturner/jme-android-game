@@ -234,28 +234,29 @@ public class CubeGame extends SimpleApplication {
 
         // Nacelles — long cylinders flanking the secondary hull
         Cylinder nacelleCyl = new Cylinder(8, 16, 0.055f, 0.65f, true);
+        // Nacelles rotated around Z so their long axis runs along X, parallel to the saucer plane
         Geometry portNacelle = new Geometry("PortNacelle", nacelleCyl);
         portNacelle.setMaterial(hullMat);
         portNacelle.setLocalTranslation(-0.38f, -0.13f, -0.04f);
-        portNacelle.rotate(FastMath.HALF_PI, 0, 0);
+        portNacelle.rotate(0, 0, FastMath.HALF_PI);
         enterpriseNode.attachChild(portNacelle);
 
         Geometry starNacelle = new Geometry("StarNacelle", nacelleCyl);
         starNacelle.setMaterial(hullMat);
         starNacelle.setLocalTranslation(0.38f, -0.13f, -0.04f);
-        starNacelle.rotate(FastMath.HALF_PI, 0, 0);
+        starNacelle.rotate(0, 0, FastMath.HALF_PI);
         enterpriseNode.attachChild(starNacelle);
 
-        // Warp caps — glowing blue spheres at the front of each nacelle
+        // Warp caps at the outer ends of each nacelle (nacelle half-length = 0.325)
         Sphere capSphere = new Sphere(8, 16, 0.062f);
         Geometry portCap = new Geometry("PortCap", capSphere);
         portCap.setMaterial(warpMat);
-        portCap.setLocalTranslation(-0.38f, -0.13f, 0.285f);
+        portCap.setLocalTranslation(-0.705f, -0.13f, -0.04f);
         enterpriseNode.attachChild(portCap);
 
         Geometry starCap = new Geometry("StarCap", capSphere);
         starCap.setMaterial(warpMat);
-        starCap.setLocalTranslation(0.38f, -0.13f, 0.285f);
+        starCap.setLocalTranslation(0.705f, -0.13f, -0.04f);
         enterpriseNode.attachChild(starCap);
 
         // Trail — particles emitted at the cube's world position, then left behind as it moves
