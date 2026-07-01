@@ -2,16 +2,16 @@
 
 ![Screenshot](screenshot.png)
 
-A simple 3D game for Android built with [jMonkeyEngine 3.6](https://jmonkeyengine.org/).
+A simple 3D space game for Android built with [jMonkeyEngine 3.6](https://jmonkeyengine.org/).
 
 ## Features
 
-- **Touch drag** to rotate the main cube on any axis
-- **Inertia** — flick the cube and it coasts to a stop
-- **Tap** to earn points and cycle the cube's colour
-- **Orbiting cube** — a smaller orange cube circles the main one on a tilted plane
-- **Particle trail** behind the orbiting cube (orange-to-red sparks)
-- **Bloom glow** on the orbiting cube (`BloomFilter`, `GlowMode.Objects`)
+- **Touch drag** to rotate the Earth on any axis
+- **Inertia** — flick and it coasts to a stop
+- **Tap** to earn points and cycle the Earth's colour
+- **Orbiting rocket** — a procedural rocket ship (red nose, white body, 4 fins) circles the Earth on a tilted plane
+- **Orange exhaust trail** behind the rocket (particle emitter)
+- **Bloom glow** on the engine nozzle (`BloomFilter`, `GlowMode.Objects`)
 - **Starfield** — 250 stars scattered on a sphere shell, batched to one draw call
 - **Ambient + directional lighting** for shaded, non-harsh geometry
 
@@ -64,9 +64,9 @@ jme3-effects       = "3.6.1-stable"   # BloomFilter, post-processing
 
 | Gesture | Action |
 |---------|--------|
-| Drag | Rotate the main cube |
+| Drag | Rotate the Earth |
 | Flick | Spin with inertia |
-| Tap | +10 points, cycle cube colour |
+| Tap | +10 points, cycle Earth colour |
 
 ## License
 

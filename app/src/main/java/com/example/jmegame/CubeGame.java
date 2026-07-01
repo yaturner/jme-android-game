@@ -31,7 +31,7 @@ import java.util.Random;
 public class CubeGame extends SimpleApplication {
 
     private Geometry cube;
-    private Node     enterpriseNode;
+    private Node     rocketNode;
     private Node     orbitPivot;
     private int score = 0;
     private BitmapText scoreText;
@@ -140,15 +140,14 @@ public class CubeGame extends SimpleApplication {
         starBatch.batch(); // merges all children into a single mesh per material
         rootNode.attachChild(starBatch);
 
-        // Cube
-        Box box = new Box(1f, 1f, 1f);
-        cube = new Geometry("Cube", box);
+        // Earth — smooth sphere with ocean-blue material
+        cube = new Geometry("Earth", new Sphere(32, 32, 1.0f));
         Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         mat.setBoolean("UseMaterialColors", true);
-        mat.setColor("Ambient",  new ColorRGBA(0.2f, 0.4f, 0.8f, 1f));
-        mat.setColor("Diffuse",  new ColorRGBA(0.2f, 0.4f, 0.8f, 1f));
-        mat.setColor("Specular", ColorRGBA.White);
-        mat.setFloat("Shininess", 64f);
+        mat.setColor("Ambient",  new ColorRGBA(0.05f, 0.15f, 0.35f, 1f));
+        mat.setColor("Diffuse",  new ColorRGBA(0.10f, 0.40f, 0.65f, 1f));
+        mat.setColor("Specular", new ColorRGBA(0.40f, 0.60f, 0.90f, 1f));
+        mat.setFloat("Shininess", 80f);
         cube.setMaterial(mat);
         rootNode.attachChild(cube);
 
@@ -164,101 +163,87 @@ public class CubeGame extends SimpleApplication {
         orbitNode.setLocalTranslation(2.5f, 0, 0);
         orbitPivot.attachChild(orbitNode);
 
-        // ── NCC-1701 Enterprise (procedural) ─────────────────────────────────
-        // All cylinders default to the Y axis; rotate HALF_PI around X to align along Z.
-        enterpriseNode = new Node("Enterprise");
-        orbitNode.attachChild(enterpriseNode);
+        // ── Generic Rocket Ship (procedural) ──────────────────────────────────
+        rocketNode = new Node("Rocket");
+        orbitNode.attachChild(rocketNode);
 
-        // Hull material — metallic light gray
-        Material hullMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        hullMat.setBoolean("UseMaterialColors", true);
-        hullMat.setColor("Ambient",  new ColorRGBA(0.55f, 0.55f, 0.60f, 1f));
-        hullMat.setColor("Diffuse",  new ColorRGBA(0.70f, 0.70f, 0.75f, 1f));
-        hullMat.setColor("Specular", ColorRGBA.White);
-        hullMat.setFloat("Shininess", 48f);
+        // Body — white/light gray hull
+        Material bodyMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        bodyMat.setBoolean("UseMaterialColors", true);
+        bodyMat.setColor("Ambient",  new ColorRGBA(0.65f, 0.65f, 0.65f, 1f));
+        bodyMat.setColor("Diffuse",  new ColorRGBA(0.88f, 0.88f, 0.88f, 1f));
+        bodyMat.setColor("Specular", ColorRGBA.White);
+        bodyMat.setFloat("Shininess", 48f);
 
-        // Warp / deflector material — glowing blue (picked up by BloomFilter)
-        Material warpMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        warpMat.setBoolean("UseMaterialColors", true);
-        warpMat.setColor("Ambient",  new ColorRGBA(0.3f, 0.5f, 1.0f, 1f));
-        warpMat.setColor("Diffuse",  new ColorRGBA(0.2f, 0.4f, 0.9f, 1f));
-        warpMat.setColor("Specular", ColorRGBA.White);
-        warpMat.setFloat("Shininess", 16f);
-        warpMat.setColor("GlowColor", new ColorRGBA(0.4f, 0.6f, 1.0f, 1f));
+        // Nose cone / fins accent — red
+        Material accentMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        accentMat.setBoolean("UseMaterialColors", true);
+        accentMat.setColor("Ambient",  new ColorRGBA(0.65f, 0.05f, 0.05f, 1f));
+        accentMat.setColor("Diffuse",  new ColorRGBA(0.88f, 0.10f, 0.10f, 1f));
+        accentMat.setColor("Specular", ColorRGBA.White);
+        accentMat.setFloat("Shininess", 24f);
 
-        // Saucer section — flat disk in the XY plane, slightly forward
-        Geometry saucer = new Geometry("Saucer", new Cylinder(8, 32, 0.40f, 0.06f, true));
-        saucer.setMaterial(hullMat);
-        saucer.setLocalTranslation(0, 0.06f, 0.22f);
-        saucer.rotate(FastMath.HALF_PI, 0, 0);
-        enterpriseNode.attachChild(saucer);
+        // Engine nozzle — dark metal with orange glow (picked up by BloomFilter)
+        Material nozzleMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        nozzleMat.setBoolean("UseMaterialColors", true);
+        nozzleMat.setColor("Ambient",  new ColorRGBA(0.20f, 0.20f, 0.20f, 1f));
+        nozzleMat.setColor("Diffuse",  new ColorRGBA(0.38f, 0.38f, 0.38f, 1f));
+        nozzleMat.setColor("Specular", ColorRGBA.White);
+        nozzleMat.setFloat("Shininess", 64f);
+        nozzleMat.setColor("GlowColor", new ColorRGBA(1.0f, 0.45f, 0.0f, 1f));
 
-        // Bridge dome on top of saucer center
-        Geometry bridge = new Geometry("Bridge", new Sphere(8, 16, 0.055f));
-        bridge.setMaterial(hullMat);
-        bridge.setLocalTranslation(0, 0.12f, 0.22f);
-        enterpriseNode.attachChild(bridge);
+        // Porthole window — dark blue
+        Material windowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        windowMat.setBoolean("UseMaterialColors", true);
+        windowMat.setColor("Ambient",  new ColorRGBA(0.05f, 0.10f, 0.30f, 1f));
+        windowMat.setColor("Diffuse",  new ColorRGBA(0.10f, 0.20f, 0.55f, 1f));
+        windowMat.setColor("Specular", ColorRGBA.White);
+        windowMat.setFloat("Shininess", 128f);
 
-        // Neck connecting saucer to secondary hull, rotated to match nacelle orientation
-        Geometry neck = new Geometry("Neck", new Box(0.055f, 0.075f, 0.055f));
-        neck.setMaterial(hullMat);
-        neck.setLocalTranslation(0, -0.01f, 0.04f);
-        neck.rotate(0, 0, FastMath.HALF_PI);
-        enterpriseNode.attachChild(neck);
+        // Nose — red sphere at top of rocket
+        Geometry nose = new Geometry("Nose", new Sphere(8, 16, 0.10f));
+        nose.setMaterial(accentMat);
+        nose.setLocalTranslation(0, 0.38f, 0);
+        rocketNode.attachChild(nose);
 
-        // Secondary hull — elongated cylinder behind and below the saucer
-        Geometry secHull = new Geometry("SecHull", new Cylinder(8, 16, 0.13f, 0.60f, true));
-        secHull.setMaterial(hullMat);
-        secHull.setLocalTranslation(0, -0.12f, -0.08f);
-        secHull.rotate(FastMath.HALF_PI, 0, 0);
-        enterpriseNode.attachChild(secHull);
+        // Body cylinder — long axis along +Y (nose up)
+        Geometry body = new Geometry("Body", new Cylinder(8, 16, 0.10f, 0.55f, true));
+        body.setMaterial(bodyMat);
+        body.setLocalTranslation(0, 0.08f, 0);
+        rocketNode.attachChild(body);
 
-        // Deflector dish — glowing blue sphere at front of secondary hull
-        Geometry deflector = new Geometry("Deflector", new Sphere(8, 16, 0.09f));
-        deflector.setMaterial(warpMat);
-        deflector.setLocalTranslation(0, -0.12f, 0.22f);
-        enterpriseNode.attachChild(deflector);
+        // Porthole window on the upper body
+        Geometry window = new Geometry("Window", new Sphere(6, 12, 0.038f));
+        window.setMaterial(windowMat);
+        window.setLocalTranslation(0.10f, 0.20f, 0);
+        rocketNode.attachChild(window);
 
-        // Pylons — angled struts connecting secondary hull to nacelles
-        Box pylonBox = new Box(0.035f, 0.10f, 0.035f);
-        Geometry portPylon = new Geometry("PortPylon", pylonBox);
-        portPylon.setMaterial(hullMat);
-        portPylon.setLocalTranslation(-0.22f, -0.09f, -0.06f);
-        portPylon.rotate(0, 0, FastMath.DEG_TO_RAD * 25f);
-        enterpriseNode.attachChild(portPylon);
+        // 4 stabiliser fins around the base (+X, -X along Z-thin; +Z, -Z along X-thin)
+        Geometry finPX = new Geometry("FinPX", new Box(0.13f, 0.16f, 0.015f));
+        finPX.setMaterial(accentMat);
+        finPX.setLocalTranslation(0.20f, -0.16f, 0);
+        rocketNode.attachChild(finPX);
 
-        Geometry starPylon = new Geometry("StarPylon", pylonBox);
-        starPylon.setMaterial(hullMat);
-        starPylon.setLocalTranslation(0.22f, -0.09f, -0.06f);
-        starPylon.rotate(0, 0, FastMath.DEG_TO_RAD * -25f);
-        enterpriseNode.attachChild(starPylon);
+        Geometry finNX = new Geometry("FinNX", new Box(0.13f, 0.16f, 0.015f));
+        finNX.setMaterial(accentMat);
+        finNX.setLocalTranslation(-0.20f, -0.16f, 0);
+        rocketNode.attachChild(finNX);
 
-        // Nacelles — long cylinders flanking the secondary hull
-        Cylinder nacelleCyl = new Cylinder(8, 16, 0.055f, 0.65f, true);
-        // Nacelles rotated around Z so their long axis runs along X, parallel to the saucer plane
-        Geometry portNacelle = new Geometry("PortNacelle", nacelleCyl);
-        portNacelle.setMaterial(hullMat);
-        portNacelle.setLocalTranslation(-0.38f, -0.13f, -0.04f);
-        portNacelle.rotate(0, 0, FastMath.HALF_PI);
-        enterpriseNode.attachChild(portNacelle);
+        Geometry finPZ = new Geometry("FinPZ", new Box(0.015f, 0.16f, 0.13f));
+        finPZ.setMaterial(accentMat);
+        finPZ.setLocalTranslation(0, -0.16f, 0.20f);
+        rocketNode.attachChild(finPZ);
 
-        Geometry starNacelle = new Geometry("StarNacelle", nacelleCyl);
-        starNacelle.setMaterial(hullMat);
-        starNacelle.setLocalTranslation(0.38f, -0.13f, -0.04f);
-        starNacelle.rotate(0, 0, FastMath.HALF_PI);
-        enterpriseNode.attachChild(starNacelle);
+        Geometry finNZ = new Geometry("FinNZ", new Box(0.015f, 0.16f, 0.13f));
+        finNZ.setMaterial(accentMat);
+        finNZ.setLocalTranslation(0, -0.16f, -0.20f);
+        rocketNode.attachChild(finNZ);
 
-        // Warp caps at the outer ends of each nacelle (nacelle half-length = 0.325)
-        Sphere capSphere = new Sphere(8, 16, 0.062f);
-        Geometry portCap = new Geometry("PortCap", capSphere);
-        portCap.setMaterial(warpMat);
-        portCap.setLocalTranslation(-0.705f, -0.13f, -0.04f);
-        enterpriseNode.attachChild(portCap);
-
-        Geometry starCap = new Geometry("StarCap", capSphere);
-        starCap.setMaterial(warpMat);
-        starCap.setLocalTranslation(0.705f, -0.13f, -0.04f);
-        enterpriseNode.attachChild(starCap);
+        // Engine nozzle bell — wider than body, glows orange
+        Geometry nozzle = new Geometry("Nozzle", new Cylinder(8, 16, 0.13f, 0.10f, true));
+        nozzle.setMaterial(nozzleMat);
+        nozzle.setLocalTranslation(0, -0.26f, 0);
+        rocketNode.attachChild(nozzle);
 
         // Trail — particles emitted at the cube's world position, then left behind as it moves
         ParticleEmitter trail = new ParticleEmitter("OrbitTrail", ParticleMesh.Type.Triangle, 150);
@@ -267,8 +252,8 @@ public class CubeGame extends SimpleApplication {
         trail.setMaterial(trailMat);
         trail.setImagesX(1);
         trail.setImagesY(1);
-        trail.setStartColor(new ColorRGBA(0.7f, 0.85f, 1.0f, 1f));  // pale blue-white
-        trail.setEndColor(  new ColorRGBA(0.1f, 0.2f,  0.8f, 0f));  // deep blue, transparent
+        trail.setStartColor(new ColorRGBA(1.0f, 0.65f, 0.10f, 1f));  // bright orange-yellow
+        trail.setEndColor(  new ColorRGBA(0.5f, 0.05f, 0.00f, 0f));  // dark red, transparent
         trail.setStartSize(0.25f);
         trail.setEndSize(0.02f);
         trail.setGravity(0f, 0f, 0f);
@@ -328,8 +313,8 @@ public class CubeGame extends SimpleApplication {
 
         // Orbit pivot rotates around its local Y — the 20° tilt makes the path look 3-D
         orbitPivot.rotate(0, tpf * 1.2f, 0);
-        // Enterprise rotates slowly so all angles are visible during the orbit
-        enterpriseNode.rotate(0, tpf * 0.6f, 0);
+        // Rocket spins slowly so all angles are visible during the orbit
+        rocketNode.rotate(0, tpf * 0.6f, 0);
 
         scoreText.setText("Score: " + score + "  |  Drag to rotate  |  Tap for points");
     }
