@@ -86,7 +86,6 @@ public class CubeGame extends SimpleApplication {
                     // Small movement = tap: award score and change color
                     if (totalDragDistance < TAP_THRESHOLD) {
                         score += 10;
-                        cycleCubeColor();
                     }
                     break;
 
@@ -140,14 +139,15 @@ public class CubeGame extends SimpleApplication {
         starBatch.batch(); // merges all children into a single mesh per material
         rootNode.attachChild(starBatch);
 
-        // Earth — smooth sphere with ocean-blue material
-        cube = new Geometry("Earth", new Sphere(32, 32, 1.0f));
+        // Earth — textured sphere; DiffuseMap drives colour, Specular adds ocean glint
+        cube = new Geometry("Earth", new Sphere(48, 48, 1.0f));
         Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         mat.setBoolean("UseMaterialColors", true);
-        mat.setColor("Ambient",  new ColorRGBA(0.05f, 0.15f, 0.35f, 1f));
-        mat.setColor("Diffuse",  new ColorRGBA(0.10f, 0.40f, 0.65f, 1f));
-        mat.setColor("Specular", new ColorRGBA(0.40f, 0.60f, 0.90f, 1f));
-        mat.setFloat("Shininess", 80f);
+        mat.setColor("Ambient",  new ColorRGBA(0.30f, 0.30f, 0.30f, 1f));
+        mat.setColor("Diffuse",  ColorRGBA.White);
+        mat.setColor("Specular", new ColorRGBA(0.40f, 0.55f, 0.85f, 1f));
+        mat.setFloat("Shininess", 60f);
+        mat.setTexture("DiffuseMap", assetManager.loadTexture("Textures/earth.png"));
         cube.setMaterial(mat);
         rootNode.attachChild(cube);
 
@@ -326,12 +326,4 @@ public class CubeGame extends SimpleApplication {
         cube.setLocalRotation(rotY.mult(rotX).mult(cube.getLocalRotation()));
     }
 
-    private void cycleCubeColor() {
-        float hue = (score * 0.05f) % 1f;
-        cube.getMaterial().setColor("Diffuse", new ColorRGBA(
-                FastMath.sin(hue * FastMath.TWO_PI)         * 0.5f + 0.5f,
-                FastMath.sin(hue * FastMath.TWO_PI + 2.09f) * 0.5f + 0.5f,
-                FastMath.sin(hue * FastMath.TWO_PI + 4.19f) * 0.5f + 0.5f,
-                1f));
-    }
 }
