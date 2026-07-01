@@ -1,5 +1,7 @@
 # JME Android Game
 
+![Screenshot](screenshot.png)
+
 A simple 3D game for Android built with [jMonkeyEngine 3.6](https://jmonkeyengine.org/).
 
 ## Features
